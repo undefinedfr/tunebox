@@ -1,0 +1,50 @@
+name: Bug
+description: Quelque chose ne marche pas comme prévu
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Ce qui se passe
+      description: Et ce que tu attendais à la place.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Comment le reproduire
+      placeholder: |
+        1. Aller dans /admin
+        2. Coller ce lien…
+        3. …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation
+      options:
+        - Docker sur un NAS
+        - Docker sur un VPS
+        - Docker sur un poste de travail
+        - Développement local (npm run dev)
+        - Application Android (APK)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Le tag utilisé, ou la sortie de `git rev-parse --short HEAD`.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Journaux
+      description: >
+        `docker compose logs --tail 100 tunebox`, ou le journal du conteneur
+        depuis l'interface du NAS. Pense à retirer ton PIN et ton SESSION_SECRET.
+      render: shell

@@ -1,0 +1,4 @@
+# Les issues libres restent ouvertes : une question d'installation n'a pas
+# besoin de rentrer dans un gabarit. Si tu actives les Discussions sur le
+# depot, GitHub proposera automatiquement d'y rediriger.
+blank_issues_enabled: true

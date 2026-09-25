@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ecran d'attente : le fond de l'app et son icone, rien de plus. Il ne dure
+     que le temps que le WebView charge le bundle embarque. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item
+        android:width="144dp"
+        android:height="144dp"
+        android:gravity="center"
+        android:drawable="@mipmap/ic_launcher" />
+</layer-list>

@@ -1,0 +1,59 @@
+# Deploiement sur un VPS avec un vrai nom de domaine.
+#
+# Caddy s'occupe du certificat Let's Encrypt et de son renouvellement : aucune
+# configuration TLS a ecrire, aucun cron a prevoir. Tunebox n'expose pas son
+# port 8080 sur l'exterieur, seul Caddy l'atteint sur le reseau interne.
+#
+# Prerequis :
+#   - les ports 80 et 443 du VPS sont libres et joignables ;
+#   - un enregistrement DNS A (et AAAA si IPv6) pointe vers le VPS ;
+#   - un fichier .env a cote de ce compose (voir .env.example a la racine)
+#     avec au minimum ADMIN_PIN, SESSION_SECRET, TUNEBOX_DOMAIN, TUNEBOX_EMAIL.
+#
+# Lancement, depuis ce dossier :
+#   docker compose up -d
+
+services:
+  tunebox:
+    build:
+      context: ../..
+    image: tunebox:local
+    container_name: tunebox
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      ADMIN_PIN: "${ADMIN_PIN:?definis ADMIN_PIN dans .env}"
+      SESSION_SECRET: "${SESSION_SECRET:?definis SESSION_SECRET dans .env}"
+      # Derriere Caddy, tout arrive en HTTPS : le cookie parent peut etre Secure.
+      COOKIE_SECURE: "1"
+      SPOTIFY_CLIENT_ID: "${SPOTIFY_CLIENT_ID:-}"
+      SPOTIFY_CLIENT_SECRET: "${SPOTIFY_CLIENT_SECRET:-}"
+      YTDLP_AUTO_UPDATE: "${YTDLP_AUTO_UPDATE:-1}"
+    volumes:
+      - ./data:/data
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: tunebox-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      TUNEBOX_DOMAIN: "${TUNEBOX_DOMAIN:?definis TUNEBOX_DOMAIN dans .env}"
+      TUNEBOX_EMAIL: "${TUNEBOX_EMAIL:?definis TUNEBOX_EMAIL dans .env}"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Les certificats survivent a une recreation du conteneur : sans ce
+      # volume, chaque redemarrage redemanderait un certificat a Let's Encrypt
+      # et finirait par taper dans les quotas.
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - tunebox
+
+volumes:
+  caddy-data:
+  caddy-config:

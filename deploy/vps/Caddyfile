@@ -1,0 +1,19 @@
+{
+	email {$TUNEBOX_EMAIL}
+}
+
+{$TUNEBOX_DOMAIN} {
+	encode zstd gzip
+
+	# L'espace parent donne acces a l'import : sur un serveur expose a
+	# Internet, il merite plus qu'un code PIN. Decommente ce bloc pour ajouter
+	# une authentification HTTP devant, et genere le hachage avec :
+	#   docker run --rm caddy:2-alpine caddy hash-password --plaintext 'ton-mot-de-passe'
+	#
+	# @admin path /admin /admin/* /api/admin/*
+	# basic_auth @admin {
+	# 	parent $2a$14$remplace-par-le-hachage-genere
+	# }
+
+	reverse_proxy tunebox:8080
+}

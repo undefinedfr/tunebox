@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Serveur et interface
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            web/package-lock.json
+
+      - name: Installer les dependances
+        run: |
+          npm ci --prefix server
+          npm ci --prefix web
+
+      - name: Verifier les types
+        run: npm run typecheck --prefix web
+
+      - name: Construire l'interface web
+        working-directory: web
+        run: |
+          node scripts/make-icons.mjs
+          npm run build
+
+      - name: Construire le bundle Android
+        working-directory: web
+        run: npm run build:native
+
+      - name: Demarrer le serveur et interroger /api/health
+        env:
+          ADMIN_PIN: "1234"
+          SESSION_SECRET: "ci-secret"
+          # yt-dlp n'est pas installe sur le runner : on verifie seulement que
+          # le serveur demarre et repond, pas qu'il sait importer.
+          PORT: "8080"
+        run: |
+          npm start &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/api/health > /dev/null; then
+              curl -fsS http://127.0.0.1:8080/api/health
+              curl -fsS http://127.0.0.1:8080/api/catalog
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "le serveur n'a pas repondu" >&2
+          exit 1

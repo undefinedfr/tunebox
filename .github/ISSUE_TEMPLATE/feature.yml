@@ -1,0 +1,18 @@
+name: Idée
+description: Proposer une fonctionnalité ou une amélioration
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Le problème
+      description: >
+        Décris la situation concrète plutôt que la solution. « Ma fille tape à
+        côté et change de morceau » en dit plus que « il faudrait un verrou ».
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: Ce que tu imagines

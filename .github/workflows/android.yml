@@ -1,0 +1,100 @@
+name: APK Android
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Construire un APK de release signe (sinon : debug)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: Construire l'APK
+    runs-on: ubuntu-latest
+    env:
+      # Le contexte `secrets` n'est pas lisible depuis un `if:` de step ; on le
+      # projette donc en variable d'environnement au niveau du job.
+      HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          # Gradle et le plugin Android refusent les JDK trop recents :
+          # 21 est la version supportee au moment de l'ecriture.
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Installer les dependances
+        working-directory: web
+        run: npm ci
+
+      - name: Construire le bundle natif et synchroniser Capacitor
+        working-directory: web
+        run: npm run android:sync
+
+      # Sans keystore, Gradle produit un APK non signe qu'Android refuse
+      # d'installer. Le secret ANDROID_KEYSTORE_BASE64 contient un keystore
+      # encode en base64 (voir docs/android.md).
+      - name: Preparer la signature
+        id: signing
+        if: env.HAS_KEYSTORE == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        working-directory: web/android
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+          cat > keystore.properties <<PROPS
+          storeFile=release.keystore
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          PROPS
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Compiler
+        working-directory: web/android
+        env:
+          VERSION_NAME: ${{ github.ref_type == 'tag' && github.ref_name || '0.0.0-dev' }}
+        run: |
+          VERSION="${VERSION_NAME#v}"
+          if [ -f keystore.properties ]; then
+            ./gradlew assembleRelease -PappVersionName="$VERSION" -PappVersionCode=${{ github.run_number }}
+          else
+            ./gradlew assembleDebug -PappVersionName="$VERSION" -PappVersionCode=${{ github.run_number }}
+          fi
+
+      - name: Renommer l'APK
+        id: apk
+        run: |
+          FOUND=$(find web/android/app/build/outputs/apk -name '*.apk' | head -1)
+          cp "$FOUND" "tunebox.apk"
+          echo "path=tunebox.apk" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tunebox-apk
+          path: ${{ steps.apk.outputs.path }}
+
+      - name: Joindre l'APK a la release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.apk.outputs.path }}

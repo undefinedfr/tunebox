@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink-900: #070b18;
+  --color-ink-800: #0b1020;
+  --color-ink-700: #141b33;
+  --color-ink-600: #1e2743;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-ink-800);
+    color: #f8fafc;
+    font-family: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, -apple-system, sans-serif;
+    /* Une enfant tape partout : pas de selection, pas de zoom accidentel. */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  button {
+    touch-action: manipulation;
+  }
+
+  /* On garde la selection la ou un parent doit vraiment saisir du texte. */
+  input,
+  textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+@keyframes eq {
+  0%, 100% { transform: scaleY(0.35); }
+  50%      { transform: scaleY(1); }
+}
+
+.eq-bar {
+  animation: eq 0.9s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+@keyframes hold-spin {
+  to { transform: rotate(360deg); }
+}

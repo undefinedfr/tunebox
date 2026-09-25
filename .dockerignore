@@ -1,0 +1,15 @@
+.git
+.github
+node_modules
+*/node_modules
+web/dist
+web/android
+web/ios
+data
+deploy
+docs
+.env
+.env.*
+*.md
+*.apk
+*.aab

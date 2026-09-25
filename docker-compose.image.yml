@@ -1,0 +1,23 @@
+# Installation sans compilation : on tire une image deja construite.
+# Renseigne TUNEBOX_IMAGE dans .env, par exemple :
+#   TUNEBOX_IMAGE=ghcr.io/undefinedfr/tunebox:latest
+#
+#   docker compose -f docker-compose.image.yml pull
+#   docker compose -f docker-compose.image.yml up -d
+
+services:
+  tunebox:
+    image: "${TUNEBOX_IMAGE:?definis TUNEBOX_IMAGE dans .env}"
+    container_name: tunebox
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      ADMIN_PIN: "${ADMIN_PIN:?definis ADMIN_PIN dans .env}"
+      SESSION_SECRET: "${SESSION_SECRET:?definis SESSION_SECRET dans .env}"
+      COOKIE_SECURE: "${COOKIE_SECURE:-0}"
+      SPOTIFY_CLIENT_ID: "${SPOTIFY_CLIENT_ID:-}"
+      SPOTIFY_CLIENT_SECRET: "${SPOTIFY_CLIENT_SECRET:-}"
+      YTDLP_AUTO_UPDATE: "${YTDLP_AUTO_UPDATE:-1}"
+    volumes:
+      - ./data:/data

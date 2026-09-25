@@ -1,0 +1,45 @@
+# Dépendances et artefacts de build
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Données locales : base SQLite, audio, pochettes
+data/media/*
+data/covers/*
+!data/media/.gitkeep
+!data/covers/.gitkeep
+data/tmp/
+data/.cache/
+data/*.db
+data/*.db-*
+
+# Configuration locale
+.env
+.env.*
+!.env.example
+
+# Android / Capacitor
+# Le projet web/android/ est versionne (icones, manifeste, CI) ; seuls les
+# artefacts de compilation Gradle et les secrets de signature sont exclus.
+web/android/.gradle/
+web/android/build/
+web/android/app/build/
+web/android/app/src/main/assets/public/
+web/android/app/src/main/assets/capacitor.config.json
+web/android/app/src/main/assets/capacitor.plugins.json
+web/android/capacitor-cordova-android-plugins/
+web/android/local.properties
+web/ios/
+*.apk
+*.aab
+*.keystore
+*.jks
+keystore.properties
+
+# Systèmes
+.DS_Store
+Thumbs.db
+dist-native/
+
+# Donnees du deploiement VPS
+deploy/vps/data/

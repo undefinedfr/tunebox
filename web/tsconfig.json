@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable",
+      "WebWorker"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "types": [
+      "node",
+      "vite/client",
+      "vite-plugin-pwa/client"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@catalog": [
+        "./src/lib/catalog.ts"
+      ],
+      "@parent": [
+        "./src/Admin.tsx"
+      ],
+      "@platform": [
+        "./src/lib/platform.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "vite.config.ts",
+    "capacitor.config.ts"
+  ]
+}

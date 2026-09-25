@@ -1,0 +1,25 @@
+# Installation par defaut : l'image est compilee sur place, donc directement
+# pour le processeur de la machine (Intel ou ARM, NAS ou VPS). Compte 3 a 8
+# minutes au premier lancement.
+#
+# Pour eviter cette compilation, utilise docker-compose.image.yml a la place :
+#   docker compose -f docker-compose.image.yml up -d
+
+services:
+  tunebox:
+    build: .
+    image: tunebox:local
+    container_name: tunebox
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      ADMIN_PIN: "${ADMIN_PIN:?definis ADMIN_PIN dans .env}"
+      SESSION_SECRET: "${SESSION_SECRET:?definis SESSION_SECRET dans .env}"
+      COOKIE_SECURE: "${COOKIE_SECURE:-0}"
+      SPOTIFY_CLIENT_ID: "${SPOTIFY_CLIENT_ID:-}"
+      SPOTIFY_CLIENT_SECRET: "${SPOTIFY_CLIENT_SECRET:-}"
+      YTDLP_AUTO_UPDATE: "${YTDLP_AUTO_UPDATE:-1}"
+    volumes:
+      # Base SQLite + audio + pochettes. C'est le seul dossier a sauvegarder.
+      - ./data:/data
