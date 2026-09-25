@@ -20,6 +20,8 @@ projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
 - En-tête CORS sur `/api/catalog`, ce qui ouvre la porte à d'autres clients.
 - Intégration continue : build web et natif, image Docker multi-architecture
   sur GHCR, APK joint à chaque release.
+- `npm run icons` dérive toutes les icônes — web, PWA, Android — d'un unique
+  fichier source, `web/brand/tunebox-icon.png`.
 
 ### Modifié
 

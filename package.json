@@ -10,7 +10,8 @@
     "start": "npm --prefix server start",
     "typecheck": "npm --prefix web run typecheck",
     "android": "npm --prefix web run android:sync",
-    "android:apk": "npm --prefix web run android:apk"
+    "android:apk": "npm --prefix web run android:apk",
+    "icons": "npm --prefix web run icons"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

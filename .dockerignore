@@ -4,6 +4,7 @@ node_modules
 */node_modules
 web/dist
 web/android
+web/brand
 web/ios
 data
 deploy

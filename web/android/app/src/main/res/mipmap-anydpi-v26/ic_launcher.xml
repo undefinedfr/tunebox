@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- L'icone est une image pleine page : le degrade va jusqu'aux bords et le
+     masque du lanceur le decoupe. Elle tient donc dans le calque de fond, et
+     le calque avant reste vide — separer le motif du degrade demanderait deux
+     fichiers la ou la source du designer n'en fait qu'un. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/ic_launcher_background"/>
-    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+    <background android:drawable="@mipmap/ic_launcher_adaptive"/>
+    <foreground android:drawable="@android:color/transparent"/>
 </adaptive-icon>

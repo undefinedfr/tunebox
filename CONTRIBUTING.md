@@ -27,6 +27,22 @@ npm run typecheck
 npm run build
 ```
 
+## Changer l'icône
+
+Toutes les icônes — web, PWA maskable, Apple touch, mipmaps Android — sont
+dérivées d'un seul fichier, `web/brand/tunebox-icon.png` (PNG 8 bits, non
+entrelacé, carré, idéalement 1000 px ou plus). Remplace-le puis :
+
+```bash
+npm run icons
+```
+
+Les fichiers produits sont versionnés : commite-les avec la source. Aucune
+étape de build ne les régénère, ni dans l'image Docker ni dans la CI.
+
+Garde le motif dans le disque central de 80 % du cadre : c'est la zone qu'un
+masque circulaire de lanceur Android ne rogne jamais.
+
 ## Ce qui est dans le périmètre
 
 - Rendre l'installation plus simple sur une plateforme de plus (Unraid, CasaOS,

@@ -33,9 +33,7 @@ jobs:
 
       - name: Construire l'interface web
         working-directory: web
-        run: |
-          node scripts/make-icons.mjs
-          npm run build
+        run: npm run build
 
       - name: Construire le bundle Android
         working-directory: web

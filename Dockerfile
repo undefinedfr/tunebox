@@ -6,7 +6,7 @@ WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web/ ./
-RUN node scripts/make-icons.mjs && npm run build
+RUN npm run build
 
 # ---------- 2. Dependances serveur ----------
 FROM node:24-bookworm-slim AS server-deps
